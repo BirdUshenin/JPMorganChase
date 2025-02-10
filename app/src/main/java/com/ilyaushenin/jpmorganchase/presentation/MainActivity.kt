@@ -49,6 +49,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import com.ilyaushenin.jpmorganchase.presentation.theme.JPMorganChaseTheme
 
 class MainActivity : ComponentActivity() {
@@ -106,7 +107,7 @@ fun MainScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(containerHeight)
-//                .zIndex(1f)
+                .zIndex(1f)
                 .background(Color(0xFF2551A2))
         ) {
             Row(

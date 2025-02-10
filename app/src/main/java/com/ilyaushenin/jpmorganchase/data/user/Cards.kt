@@ -1,4 +1,4 @@
-package com.ilyaushenin.jpmorganchase.data
+package com.ilyaushenin.jpmorganchase.data.user
 
 data class Cards(
     val id: Int,
