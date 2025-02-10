@@ -1,4 +1,4 @@
-package com.ilyaushenin.jpmorganchase.ui.theme
+package com.ilyaushenin.jpmorganchase.presentation.theme
 
 import androidx.compose.ui.graphics.Color
 
