@@ -1,4 +1,4 @@
-package com.ilyaushenin.jpmorganchase.domain
+package com.ilyaushenin.jpmorganchase.data.network
 
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
