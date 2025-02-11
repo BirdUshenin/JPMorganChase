@@ -1,4 +1,4 @@
-package com.ilyaushenin.jpmorganchase.domain
+package com.ilyaushenin.jpmorganchase.data.network
 
 import com.ilyaushenin.jpmorganchase.data.user.UserResponse
 import retrofit2.http.GET
@@ -6,6 +6,6 @@ import retrofit2.http.GET
 interface ApiService {
 
     @GET("user.json")
-    suspend fun getUser(): UserResponse
+    suspend fun getUserResponse(): UserResponse
 
 }
