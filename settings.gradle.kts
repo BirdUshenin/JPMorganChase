@@ -21,4 +21,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "JPMorganChase"
 include(":app")
- 
+include(":features")
