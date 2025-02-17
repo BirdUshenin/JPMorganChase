@@ -1,7 +1,6 @@
-package com.ilyaushenin.jpmorganchase.presentation
+package com.ilyaushenin.jpmorganchase.presentation.mainScreen
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -53,6 +52,11 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
+import com.ilyaushenin.jpmorganchase.presentation.DragElementItem
+import com.ilyaushenin.jpmorganchase.presentation.DragState
+import com.ilyaushenin.jpmorganchase.presentation.detectReorderAfterLongPress
+import com.ilyaushenin.jpmorganchase.presentation.dragElementer
+import com.ilyaushenin.jpmorganchase.presentation.rememberDragElementState
 import com.ilyaushenin.jpmorganchase.presentation.theme.JPMorganChaseTheme
 
 class MainActivity : ComponentActivity() {
@@ -179,7 +183,7 @@ fun MainScreen(
 @Composable
 fun HorizontalReorderList() {
     val data = remember { mutableStateOf(List(20) { "Item $it" }) }
-    val state = rememberReorderableLazyListState(onMove = { from, to ->
+    val state = rememberDragElementState(onMove = { from, to ->
         data.value = data.value.toMutableList().apply {
             add(to.index, removeAt(from.index))
         }
@@ -189,11 +193,11 @@ fun HorizontalReorderList() {
         state = state.listState,
         modifier = Modifier
             .fillMaxSize()
-            .reorderable(state)
+            .dragElementer(state)
             .detectReorderAfterLongPress(state)
     ) {
         items(data.value, { it }) { item ->
-            ReorderableItem(state as ReorderableState<*>, key = item) { isDragging ->
+            DragElementItem(state as DragState<*>, key = item) { isDragging ->
                 val elevation = animateDpAsState(if (isDragging) 16.dp else 0.dp, label = "")
                 Box(
                     modifier = Modifier

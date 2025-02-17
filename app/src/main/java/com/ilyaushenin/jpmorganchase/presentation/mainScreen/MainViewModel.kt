@@ -1,4 +1,4 @@
-package com.ilyaushenin.jpmorganchase.presentation
+package com.ilyaushenin.jpmorganchase.presentation.mainScreen
 
 import android.util.Log
 import androidx.lifecycle.ViewModel

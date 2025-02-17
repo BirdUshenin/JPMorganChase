@@ -68,18 +68,26 @@ import kotlin.math.min
 import kotlin.math.sign
 
 @Composable
-fun rememberReorderableLazyListState(
+fun rememberDragElementState(
     onMove: (ItemPosition, ItemPosition) -> Unit,
     listState: LazyListState = rememberLazyListState(),
     canDragOver: ((draggedOver: ItemPosition, dragging: ItemPosition) -> Boolean)? = null,
     onDragEnd: ((startIndex: Int, endIndex: Int) -> (Unit))? = null,
     maxScrollPerFrame: Dp = 20.dp,
     dragCancelledAnimation: DragCancelledAnimation = SpringDragCancelledAnimation()
-): ReorderableLazyListState {
+): DragElementState {
     val maxScroll = with(LocalDensity.current) { maxScrollPerFrame.toPx() }
     val scope = rememberCoroutineScope()
     val state = remember(listState) {
-        ReorderableLazyListState(listState, scope, maxScroll, onMove, canDragOver, onDragEnd, dragCancelledAnimation)
+        DragElementState(
+            listState,
+            scope,
+            maxScroll,
+            onMove,
+            canDragOver,
+            onDragEnd,
+            dragCancelledAnimation
+        )
     }
     val isRtl = LocalLayoutDirection.current == LayoutDirection.Rtl
     LaunchedEffect(state) {
@@ -101,7 +109,7 @@ fun rememberReorderableLazyListState(
     return state
 }
 
-class ReorderableLazyListState(
+class DragElementState(
     val listState: LazyListState,
     scope: CoroutineScope,
     maxScrollPerFrame: Float,
@@ -109,7 +117,7 @@ class ReorderableLazyListState(
     canDragOver: ((draggedOver: ItemPosition, dragging: ItemPosition) -> Boolean)? = null,
     onDragEnd: ((startIndex: Int, endIndex: Int) -> (Unit))? = null,
     dragCancelledAnimation: DragCancelledAnimation = SpringDragCancelledAnimation()
-) : ReorderableState<LazyListItemInfo>(
+) : DragState<LazyListItemInfo>(
     scope,
     maxScrollPerFrame,
     onMove,
@@ -193,8 +201,7 @@ class ReorderableLazyListState(
         }
 }
 
-
-abstract class ReorderableState<T>(
+abstract class DragState<T>(
     private val scope: CoroutineScope,
     private val maxScrollPerFrame: Float,
     private val onMove: (fromIndex: ItemPosition, toIndex: ItemPosition) -> (Unit),
@@ -393,7 +400,12 @@ abstract class ReorderableState<T>(
         return targets
     }
 
-    protected open fun chooseDropItem(draggedItemInfo: T?, items: List<T>, curX: Int, curY: Int): T? {
+    protected open fun chooseDropItem(
+        draggedItemInfo: T?,
+        items: List<T>,
+        curX: Int,
+        curY: Int
+    ): T? {
         if (draggedItemInfo == null) {
             return if (draggingItemIndex != null) items.lastOrNull() else null
         }
@@ -466,13 +478,21 @@ abstract class ReorderableState<T>(
         return when {
             delta > 0 ->
                 (endOffset - viewportEndOffset).coerceAtLeast(0f)
+
             delta < 0 ->
                 (startOffset - viewportStartOffset).coerceAtMost(0f)
+
             else -> 0f
         }
-            .let { interpolateOutOfBoundsScroll((endOffset - startOffset).toInt(), it, time, maxScroll) }
+            .let {
+                interpolateOutOfBoundsScroll(
+                    (endOffset - startOffset).toInt(),
+                    it,
+                    time,
+                    maxScroll
+                )
+            }
     }
-
 
     companion object {
         private const val ACCELERATION_LIMIT_TIME_MS: Long = 1500
@@ -492,8 +512,10 @@ abstract class ReorderableState<T>(
         ): Float {
             if (viewSizeOutOfBounds == 0f) return 0f
             val outOfBoundsRatio = min(1f, 1f * viewSizeOutOfBounds.absoluteValue / viewSize)
-            val cappedScroll = sign(viewSizeOutOfBounds) * maxScroll * EaseOutQuadInterpolator(outOfBoundsRatio)
-            val timeRatio = if (time > ACCELERATION_LIMIT_TIME_MS) 1f else time.toFloat() / ACCELERATION_LIMIT_TIME_MS
+            val cappedScroll =
+                sign(viewSizeOutOfBounds) * maxScroll * EaseOutQuadInterpolator(outOfBoundsRatio)
+            val timeRatio =
+                if (time > ACCELERATION_LIMIT_TIME_MS) 1f else time.toFloat() / ACCELERATION_LIMIT_TIME_MS
             return (cappedScroll * EaseInQuintInterpolator(timeRatio)).let {
                 if (it == 0f) {
                     if (viewSizeOutOfBounds > 0) 1f else -1f
@@ -505,8 +527,9 @@ abstract class ReorderableState<T>(
     }
 }
 
-fun Modifier.reorderable(
-    state: ReorderableState<*>
+@SuppressLint("ReturnFromAwaitPointerEventScope")
+fun Modifier.dragElementer(
+    state: DragState<*>
 ) = then(
     Modifier.pointerInput(Unit) {
         forEachGesture {
@@ -514,7 +537,11 @@ fun Modifier.reorderable(
             val down = awaitPointerEventScope {
                 currentEvent.changes.fastFirstOrNull { it.id == dragStart.id }
             }
-            if (down != null && state.onDragStart(down.position.x.toInt(), down.position.y.toInt())) {
+            if (down != null && state.onDragStart(
+                    down.position.x.toInt(),
+                    down.position.y.toInt()
+                )
+            ) {
                 dragStart.offset?.apply {
                     state.onDrag(x.toInt(), y.toInt())
                 }
@@ -565,7 +592,8 @@ interface DragCancelledAnimation {
     val offset: Offset
 }
 
-class SpringDragCancelledAnimation(private val stiffness: Float = Spring.StiffnessMediumLow) : DragCancelledAnimation {
+class SpringDragCancelledAnimation(private val stiffness: Float = Spring.StiffnessMediumLow) :
+    DragCancelledAnimation {
     private val animatable = Animatable(Offset.Zero, Offset.VectorConverter)
     override val offset: Offset
         get() = animatable.value
@@ -586,7 +614,7 @@ class SpringDragCancelledAnimation(private val stiffness: Float = Spring.Stiffne
 
 @SuppressLint("ReturnFromAwaitPointerEventScope")
 @Composable
-fun Modifier.detectReorderAfterLongPress(state: ReorderableLazyListState): Modifier {
+fun Modifier.detectReorderAfterLongPress(state: DragElementState): Modifier {
     val hapticFeedback = LocalHapticFeedback.current
     return this.then(
         Modifier.pointerInput(Unit) {
@@ -607,18 +635,26 @@ data class ItemPosition(val index: Int, val key: Any?)
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun LazyItemScope.ReorderableItem(
-    reorderableState: ReorderableState<*>,
+fun LazyItemScope.DragElementItem(
+    dragElementState: DragState<*>,
     key: Any?,
     modifier: Modifier = Modifier,
     index: Int? = null,
     orientationLocked: Boolean = true,
     content: @Composable BoxScope.(isDragging: Boolean) -> Unit
-) = ReorderableItem(reorderableState, key, modifier, Modifier.animateItemPlacement(), orientationLocked, index, content)
+) = DragElementItem(
+    dragElementState,
+    key,
+    modifier,
+    Modifier.animateItemPlacement(),
+    orientationLocked,
+    index,
+    content
+)
 
 @Composable
-fun ReorderableItem(
-    state: ReorderableState<*>,
+fun DragElementItem(
+    state: DragState<*>,
     key: Any?,
     modifier: Modifier = Modifier,
     defaultDraggingModifier: Modifier = Modifier,
@@ -636,8 +672,10 @@ fun ReorderableItem(
             Modifier
                 .zIndex(1f)
                 .graphicsLayer {
-                    translationX = if (!orientationLocked || !state.isVerticalScroll) state.draggingItemLeft else 0f
-                    translationY = if (!orientationLocked || state.isVerticalScroll) state.draggingItemTop else 0f
+                    translationX =
+                        if (!orientationLocked || !state.isVerticalScroll) state.draggingItemLeft else 0f
+                    translationY =
+                        if (!orientationLocked || state.isVerticalScroll) state.draggingItemTop else 0f
                 }
         } else {
             val cancel = if (index != null) {
@@ -646,10 +684,13 @@ fun ReorderableItem(
                 key == state.dragCancelledAnimation.position?.key
             }
             if (cancel) {
-                Modifier.zIndex(1f)
+                Modifier
+                    .zIndex(1f)
                     .graphicsLayer {
-                        translationX = if (!orientationLocked || !state.isVerticalScroll) state.dragCancelledAnimation.offset.x else 0f
-                        translationY = if (!orientationLocked || state.isVerticalScroll) state.dragCancelledAnimation.offset.y else 0f
+                        translationX =
+                            if (!orientationLocked || !state.isVerticalScroll) state.dragCancelledAnimation.offset.x else 0f
+                        translationY =
+                            if (!orientationLocked || state.isVerticalScroll) state.dragCancelledAnimation.offset.y else 0f
                     }
             } else {
                 defaultDraggingModifier
@@ -660,6 +701,7 @@ fun ReorderableItem(
     }
 }
 
+@SuppressLint("ReturnFromAwaitPointerEventScope")
 internal suspend fun PointerInputScope.awaitLongPressOrCancellation(
     initialDown: PointerInputChange
 ): PointerInputChange? {
