@@ -52,11 +52,11 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
-import com.ilyaushenin.jpmorganchase.presentation.DragElementItem
-import com.ilyaushenin.jpmorganchase.presentation.DragState
-import com.ilyaushenin.jpmorganchase.presentation.detectReorderAfterLongPress
-import com.ilyaushenin.jpmorganchase.presentation.dragElementer
-import com.ilyaushenin.jpmorganchase.presentation.rememberDragElementState
+import com.ilyaushenin.jpmorganchase.core.dragElementSwiper.dragState.DragState
+import com.ilyaushenin.jpmorganchase.core.dragElementSwiper.rememberDragElementState.DragElementItem
+import com.ilyaushenin.jpmorganchase.core.dragElementSwiper.rememberDragElementState.detectReorderAfterLongPress
+import com.ilyaushenin.jpmorganchase.core.dragElementSwiper.rememberDragElementState.dragElementer
+import com.ilyaushenin.jpmorganchase.core.dragElementSwiper.rememberDragElementState.rememberDragElementState
 import com.ilyaushenin.jpmorganchase.presentation.theme.JPMorganChaseTheme
 
 class MainActivity : ComponentActivity() {
