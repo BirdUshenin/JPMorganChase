@@ -3,27 +3,26 @@ package com.ilyaushenin.jpmorganchase.presentation.mainScreen
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ilyaushenin.jpmorganchase.data.repository.UserRepositoryImpl
-import com.ilyaushenin.jpmorganchase.data.network.ApiClient
-import com.ilyaushenin.jpmorganchase.domain.repository.UserRepository
 import com.ilyaushenin.jpmorganchase.domain.usecase.GetUserUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class MainViewModel : ViewModel() {
+class MainViewModel(
+    private val getUserUseCase: GetUserUseCase
+) : ViewModel() {
+
+    init {
+        getUserData()
+    }
 
     // states
     private val _states: MutableStateFlow<MainStates> =
         MutableStateFlow(MainStates())
     val states = _states.asStateFlow()
 
-    private val apiService = ApiClient.apiService
-    private val userRepository: UserRepository = UserRepositoryImpl(apiService)
-    private val getUserUseCase = GetUserUseCase(userRepository)
-
-    fun getUserData(){
+    private fun getUserData(){
         viewModelScope.launch {
             try {
                 val user = getUserUseCase.execute()
