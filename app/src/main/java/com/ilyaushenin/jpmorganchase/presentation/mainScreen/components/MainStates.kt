@@ -1,4 +1,4 @@
-package com.ilyaushenin.jpmorganchase.presentation.mainScreen
+package com.ilyaushenin.jpmorganchase.presentation.mainScreen.components
 
 import com.ilyaushenin.jpmorganchase.data.user.User
 

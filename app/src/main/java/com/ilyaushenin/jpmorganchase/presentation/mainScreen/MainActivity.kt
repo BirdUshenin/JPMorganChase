@@ -6,6 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import com.ilyaushenin.jpmorganchase.presentation.mainScreen.components.MainScreen
 import com.ilyaushenin.jpmorganchase.presentation.theme.JPMorganChaseTheme
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
