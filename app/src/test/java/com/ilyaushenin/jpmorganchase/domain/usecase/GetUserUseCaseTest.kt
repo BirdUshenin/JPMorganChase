@@ -19,7 +19,7 @@ class TestRepository : UserRepository {
     override suspend fun getUser(): User {
         return User(
             name = "",
-            cards = listOf(Cards(id = 1, balance = 1, currency = "", number = "", name = ""))
+            cards = listOf(Cards(id = 1, balance = "1", currency = "", number = "", name = ""))
         )
     }
 }
@@ -37,7 +37,7 @@ class GetUserUseCaseTest {
         val testData = User(
             name = "",
             cards = listOf(
-                Cards(id = 1, balance = 1, currency = "", number = "", name = "")
+                Cards(id = 1, balance = "1", currency = "", number = "", name = "")
             )
         )
         // other variant
@@ -49,7 +49,7 @@ class GetUserUseCaseTest {
         val expected = User(
             name = "",
             cards = listOf(
-                Cards(id = 1, balance = 1, currency = "", number = "", name = "")
+                Cards(id = 1, balance = "1", currency = "", number = "", name = "")
             )
         )
         Assertions.assertEquals(expected, actual)
@@ -76,7 +76,7 @@ class GetResponseUserDateTest {
                 cards = listOf(
                     Cards(
                         id = 39031,
-                        balance = 500,
+                        balance = "500",
                         currency = "RUB",
                         number = "3113444455559857",
                         name = ""

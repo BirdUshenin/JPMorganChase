@@ -31,7 +31,6 @@ fun MainPanel(
     states: MainStates,
     scrollOffset: Float
 ) {
-
     val containerHeight: Dp by animateDpAsState(
         targetValue = when {
             scrollOffset < 0 -> 0.dp
@@ -98,4 +97,3 @@ fun MainPanel(
         HorizontalReorderList()
     }
 }
-

@@ -4,5 +4,5 @@ import com.ilyaushenin.jpmorganchase.data.user.User
 
 data class MainStates(
     val loading: Boolean = false,
-    val user: User? = null
+    val user: User? = null,
 )
