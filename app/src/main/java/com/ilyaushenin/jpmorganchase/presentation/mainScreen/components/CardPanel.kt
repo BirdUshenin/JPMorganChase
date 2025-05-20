@@ -9,11 +9,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ilyaushenin.jpmorganchase.core.extention.customBrush
 import com.ilyaushenin.jpmorganchase.data.user.Cards
@@ -25,7 +28,9 @@ fun CardPanel(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp)
+            .padding(16.dp),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = Color(0xFFEEEEEE))
     ) {
         Text(
             modifier = Modifier.padding(
@@ -133,4 +138,12 @@ fun DebitCard(
             Text(text = "${cards.icon_valuta}${cards.balance}")
         }
     }
+}
+
+@Preview
+@Composable
+fun CardsPreview() {
+    CardPanel(
+        states = MainStates()
+    )
 }
