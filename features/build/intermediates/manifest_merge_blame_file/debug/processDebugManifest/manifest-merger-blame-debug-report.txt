@@ -1,0 +1,25 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    xmlns:dist="http://schemas.android.com/apk/distribution"
+4    package="com.ilyaushenin.features" >
+5
+6    <uses-sdk android:minSdkVersion="24" />
+7
+8    <dist:module
+8-->/Users/uiv/AndroidStudioProjects/JPMorganChase/features/src/main/AndroidManifest.xml:5:5-12:19
+9        dist:instant="false"
+9-->/Users/uiv/AndroidStudioProjects/JPMorganChase/features/src/main/AndroidManifest.xml:6:9-29
+10        dist:title="@string/title_features" >
+10-->/Users/uiv/AndroidStudioProjects/JPMorganChase/features/src/main/AndroidManifest.xml:7:9-44
+11        <dist:delivery>
+11-->/Users/uiv/AndroidStudioProjects/JPMorganChase/features/src/main/AndroidManifest.xml:8:9-10:25
+12            <dist:on-demand />
+12-->/Users/uiv/AndroidStudioProjects/JPMorganChase/features/src/main/AndroidManifest.xml:9:13-31
+13        </dist:delivery>
+14
+15        <dist:fusing dist:include="true" />
+15-->/Users/uiv/AndroidStudioProjects/JPMorganChase/features/src/main/AndroidManifest.xml:11:9-44
+15-->/Users/uiv/AndroidStudioProjects/JPMorganChase/features/src/main/AndroidManifest.xml:11:22-41
+16    </dist:module>
+17
+18</manifest>

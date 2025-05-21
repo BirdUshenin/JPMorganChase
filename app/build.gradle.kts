@@ -67,6 +67,9 @@ dependencies {
     implementation(libs.koin.core)
     implementation (libs.koin.android)
 
+    // modules
+    implementation(project(":features"))
+
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
